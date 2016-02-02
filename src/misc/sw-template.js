@@ -3,6 +3,7 @@ function WebpackServiceWorker(params) {
 
   const strategy = params.strategy;
   const assets = params.assets;
+  const ignoreSearch = params.ignoreSearch;
   const tagMap = {
     all: params.version,
     // Hash is included in output file, but not used in cache name,
@@ -159,10 +160,17 @@ function WebpackServiceWorker(params) {
       return;
     }
 
+    let request = event.request;
+    if (ignoreSearch && url.search) {
+      const newurl = new URL(url);
+      newurl.search = ''
+      request = new Request(newurl);
+    }
+
     // if asset is from main entry read it directly from the cache
     if (assets.main.indexOf(url.pathname) !== -1) {
       event.respondWith(
-        caches.match(event.request, {
+        caches.match(request, {
           cacheName: CACHE_NAME
         })
       );
@@ -170,7 +178,7 @@ function WebpackServiceWorker(params) {
       return;
     }
 
-    const resource = caches.match(event.request, {
+    const resource = caches.match(request, {
       cacheName: CACHE_NAME
     }).then((response) => {
       if (response) {
@@ -182,7 +190,7 @@ function WebpackServiceWorker(params) {
       }
 
       // Load and cache known assets
-      return fetch(event.request.clone()).then((response) => {
+      return fetch(request.clone()).then((response) => {
         if (
           !response || response.status !== 200 || response.type !== 'basic'
         ) {
@@ -200,7 +208,7 @@ function WebpackServiceWorker(params) {
         const responseClone = response.clone();
 
         caches.open(CACHE_NAME).then((cache) => {
-          return cache.put(event.request, responseClone);
+          return cache.put(request, responseClone);
         }).then(() => {
           console.log('[SW]:', 'Cache asset: ' + url.pathname);
         });

@@ -13,6 +13,7 @@ export default class ServiceWorker {
     this.output = options.output.replace(/^\//, '');
     this.basePath = pathToBase(this.output, true);
     this.publicPath = options.publicPath;
+    this.ignoreSearch = options.ignoreSearch;
 
     this.ENTRY_NAME = 'serviceworker';
     this.CACHE_NAME = 'webpack-offline';
@@ -118,14 +119,16 @@ export default class ServiceWorker {
         version: plugin.strategy === 'all' ? plugin.version : void 0,
         hash: plugin.strategy !== 'all' ? plugin.hash : void 0,
         name: this.CACHE_NAME,
-        relativePaths: plugin.relativePaths
+        relativePaths: plugin.relativePaths,
+        ignoreSearch: this.ignoreSearch
       }, null, minify ? void 0 : '  ') };
     `.trim();
   };
 
   getConfig(plugin) {
     return {
-      output: path.join(this.publicPath || plugin.scope, this.output)
+      output: path.join(this.publicPath || plugin.scope, this.output),
+      scope: plugin.scope
     };
   }
 }

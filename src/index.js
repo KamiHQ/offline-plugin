@@ -16,7 +16,6 @@ const defaultOptions = {
   externals: [],
   excludes: [],
   relativePaths: false,
-  publicPath: null,
   version() {
     return (new Date).toLocaleString();
   },
@@ -28,7 +27,9 @@ const defaultOptions = {
 
   ServiceWorker: {
     output: 'sw.js',
-    entry: path.join(__dirname, '../empty-entry.js')
+    entry: path.join(__dirname, '../empty-entry.js'),
+    ignoreSearch: false,
+    publicPath: null,
   },
 
   AppCache: {

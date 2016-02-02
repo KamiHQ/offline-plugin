@@ -9,7 +9,9 @@ function install(options, callback, errback) {
       (window.location.protocol === 'https:' || window.location.hostname === 'localhost')
     ) {
       navigator.serviceWorker
-        .register(<%- JSON.stringify(ServiceWorker.output) %>)
+        .register(<%- JSON.stringify(ServiceWorker.output) %>, {
+          scope: <%- JSON.stringify(ServiceWorker.scope) %>
+        })
         .then(function() {
           callback({
             service: 'ServiceWorker'
