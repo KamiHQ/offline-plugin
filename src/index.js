@@ -16,6 +16,7 @@ const defaultOptions = {
   externals: [],
   excludes: [],
   relativePaths: false,
+  publicPath: null,
   version() {
     return (new Date).toLocaleString();
   },

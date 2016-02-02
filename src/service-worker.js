@@ -12,6 +12,7 @@ export default class ServiceWorker {
     this.entry = options.entry;
     this.output = options.output.replace(/^\//, '');
     this.basePath = pathToBase(this.output, true);
+    this.publicPath = options.publicPath;
 
     this.ENTRY_NAME = 'serviceworker';
     this.CACHE_NAME = 'webpack-offline';
@@ -100,7 +101,9 @@ export default class ServiceWorker {
   getDataTemplate(data, plugin, minify) {
     const cache = (key) => {
       return (data[key] || []).map(
-        plugin.relativePaths ? (path => this.basePath + path) : (a => a)
+        plugin.relativePaths ? (p => path.join(this.basePath, p)) : (a => a)
+      ).map(
+        this.publicPath ? (p => path.join(this.publicPath, p)) : (a => a)
       );
     };
 
@@ -122,7 +125,7 @@ export default class ServiceWorker {
 
   getConfig(plugin) {
     return {
-      output: plugin.scope + this.output
+      output: path.join(this.publicPath || plugin.scope, this.output)
     };
   }
 }
