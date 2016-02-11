@@ -65,7 +65,7 @@ function WebpackServiceWorker(params) {
 
   function cacheAssets(section) {
     return caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(assets[section].map((url) => url + '?' + params.hash)).then(() => {
+      return cache.addAll(assets[section]).then(() => {
         console.groupCollapsed('[SW]:', 'Cached assets: ' + section);
         assets[section].forEach((asset) => {
           console.log('Asset:', asset);
@@ -161,7 +161,7 @@ function WebpackServiceWorker(params) {
     }
 
     const newurl = new URL(url);
-    newurl.search = params.hash
+    newurl.search = '';
     const request = new Request(newurl);
 
     event.respondWith(fetch(event.request.clone()).catch((err) => {
