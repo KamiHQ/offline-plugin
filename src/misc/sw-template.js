@@ -65,7 +65,7 @@ function WebpackServiceWorker(params) {
 
   function cacheAssets(section) {
     return caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(assets[section]).then(() => {
+      return cache.addAll(assets[section].map((url) => url + '?v=' + params.hash)).then(() => {
         console.groupCollapsed('[SW]:', 'Cached assets: ' + section);
         assets[section].forEach((asset) => {
           console.log('Asset:', asset);
