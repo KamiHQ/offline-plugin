@@ -167,6 +167,14 @@ function WebpackServiceWorker(params) {
       request = new Request(newurl);
     }
 
+    event.respondWith(fetch(event.request.clone()).catch((err) => {
+      return caches.match(request, {
+          cacheName: CACHE_NAME
+        });
+    }));
+
+    return;
+
     // if asset is from main entry read it directly from the cache
     if (assets.main.indexOf(url.pathname) !== -1) {
       event.respondWith(
